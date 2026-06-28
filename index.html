@@ -47,7 +47,7 @@
     #starfield { position: fixed; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none; }
     #app {
       position: relative; z-index: 1; width: 100%; max-width: 700px;
-      margin: 0 auto; padding: 12px 12px 130px 12px; /* tăng padding dưới để không bị dock che */
+      margin: 0 auto; padding: 12px 12px 40px 12px;
       display: flex; flex-direction: column; gap: 10px;
       min-height: 100vh;
       transform-style: preserve-3d;
@@ -140,14 +140,9 @@
     }
 
     /* ==============================================
-       THANH ĐIỀU HƯỚNG NỔI (Floating Dock iOS/VisionOS)
+       THANH ĐIỀU HƯỚNG TRÊN (GIỮA TIÊU ĐỀ VÀ NỘI DUNG)
     ============================================== */
-    .bottom-nav {
-      position: fixed;
-      bottom: calc(env(safe-area-inset-bottom, 16px) + 16px);
-      left: 50%;
-      transform: translateX(-50%) translateZ(0);
-      z-index: 100;
+    .top-nav {
       display: flex;
       gap: 6px;
       background: rgba(12, 22, 55, 0.65);
@@ -156,12 +151,13 @@
       border: 1px solid rgba(100, 200, 255, 0.4);
       border-radius: 36px;
       padding: 10px 24px;
-      width: calc(100% - 32px);
-      max-width: 680px;
+      margin: 8px 0 4px 0;
       box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(80, 160, 255, 0.2) inset,
                   0 0 60px rgba(60, 150, 255, 0.25);
-      transition: box-shadow 0.4s, transform 0.2s ease-out;
-      will-change: transform;
+      transition: box-shadow 0.4s;
+      width: 100%;
+      max-width: 680px;
+      align-self: center;
     }
 
     .nav-item {
@@ -208,7 +204,7 @@
     }
 
     @media (max-width: 550px) {
-      .bottom-nav {
+      .top-nav {
         gap: 2px;
         padding: 8px 14px;
         border-radius: 30px;
@@ -283,7 +279,7 @@
     @media (max-width:480px) {
       .glass-card { padding: 10px; }
       .hero-title { font-size: 1.2rem; }
-      #app { padding: 8px 8px 140px 8px; }
+      #app { padding: 8px 8px 30px 8px; }
     }
   </style>
 </head>
@@ -306,6 +302,14 @@
         <span id="statusText">Sẵn sàng</span>
       </div>
     </header>
+
+    <!-- ==================== THANH ĐIỀU HƯỚNG TRÊN ==================== -->
+    <nav class="top-nav" id="topNav">
+      <button class="nav-item active" data-page="home" onclick="navigateTo('home')"><span>🏠</span><span class="nav-label">Home</span></button>
+      <button class="nav-item" data-page="generate" onclick="navigateTo('generate')"><span>🎤</span><span class="nav-label">Tạo</span></button>
+      <button class="nav-item" data-page="history" onclick="navigateTo('history')"><span>📜</span><span class="nav-label">LS</span></button>
+      <button class="nav-item" data-page="about" onclick="navigateTo('about')"><span>ℹ</span><span class="nav-label">About</span></button>
+    </nav>
 
     <!-- TRANG CHỦ -->
     <section class="page-section active" id="page-home">
@@ -413,14 +417,6 @@
     </footer>
   </div>
 
-  <!-- ==================== THANH ĐIỀU HƯỚNG NỔI ==================== -->
-  <nav class="bottom-nav" id="bottomNav">
-    <button class="nav-item active" data-page="home" onclick="navigateTo('home')"><span>🏠</span><span class="nav-label">Home</span></button>
-    <button class="nav-item" data-page="generate" onclick="navigateTo('generate')"><span>🎤</span><span class="nav-label">Tạo</span></button>
-    <button class="nav-item" data-page="history" onclick="navigateTo('history')"><span>📜</span><span class="nav-label">LS</span></button>
-    <button class="nav-item" data-page="about" onclick="navigateTo('about')"><span>ℹ</span><span class="nav-label">About</span></button>
-  </nav>
-
   <audio id="audioElement" style="display:none;" preload="auto"></audio>
 
   <!-- ==================== JAVASCRIPT ==================== -->
@@ -430,7 +426,7 @@
     // ==============================================
     const CONFIG = {
       elevenLabsApiKeys: [
-        "sk_b454377cb1d262cd490226bf175e55dcc8937aee7d3cf266",
+        "sk_283e9386b09c732a8207efề9bfbc193ae0500b903c67a850",
         "sk_6a278e08e4d9d76846eb904e55b9ea195b2554708044bb25",
         "sk_283e9386b09c732a8207efề9bfbc193ae0500b903c67a850"
       ],
@@ -521,7 +517,6 @@
     const translationBox = document.getElementById('translationBox');
     const translatedText = document.getElementById('translatedText');
     const enhanceToggle = document.getElementById('enhanceToggle');
-    const bottomNav = document.getElementById('bottomNav');
 
     let audioBlob = null, audioBlobUrl = null, isPlaying = false;
     let enhanceEnabled = false;
@@ -652,51 +647,10 @@
 
     function escapeHtml(s){let d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 
-    // ==============================================
-    // PARALLAX CHO THANH ĐIỀU HƯỚNG NỔI
-    // ==============================================
-    let lastScrollY = window.scrollY;
-    let navOffsetY = 0;
-    let scrollTimeout;
-    const nav = document.getElementById('bottomNav');
-
-    function updateNavParallax() {
-      const currentScrollY = window.scrollY;
-      const delta = currentScrollY - lastScrollY;
-      // Giới hạn dịch chuyển tối đa 12px
-      navOffsetY = Math.min(12, Math.max(-12, navOffsetY + delta * 0.3));
-      // Áp dụng transform, giữ nguyên translateX
-      nav.style.transform = `translateX(-50%) translateY(${navOffsetY}px) translateZ(0)`;
-      lastScrollY = currentScrollY;
-
-      // Khi dừng cuộn 200ms, đưa về vị trí cũ
-      clearTimeout(scrollTimeout);
-      scrollTimeout = setTimeout(() => {
-        nav.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1)';
-        nav.style.transform = 'translateX(-50%) translateY(0px) translateZ(0)';
-        navOffsetY = 0;
-        // Sau khi transition kết thúc, xóa transition để tránh giật khi cuộn tiếp
-        setTimeout(() => { nav.style.transition = ''; }, 500);
-      }, 200);
-    }
-
-    window.addEventListener('scroll', () => {
-      if (!nav) return;
-      // Xóa transition khi đang cuộn để mượt
-      nav.style.transition = 'none';
-      requestAnimationFrame(updateNavParallax);
-    }, { passive: true });
-
-    // ==============================================
-    // KHỞI ĐỘNG
-    // ==============================================
+    // Khởi động
     (function init(){
       renderHistory();
       setStatus('ready');
-      // Đảm bảo nav ở đúng vị trí ban đầu
-      if (nav) {
-        nav.style.transform = 'translateX(-50%) translateY(0px) translateZ(0)';
-      }
     })();
   </script>
 </body>
