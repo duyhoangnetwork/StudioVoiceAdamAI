@@ -427,11 +427,12 @@
     const CONFIG = {
       elevenLabsApiKeys: [
         "sk_6a278e08e4d9d76846eb904e55b9ea195b2554708044bb25",
-        "sk_283e9386b09c732a8207efề9bfbc193ae0500b903c67a850"
+        "sk_b454377cb1d262cd490226bf175e55dcc8937aee7d3cf266"
       ],
       defaultVoiceId: "pNInz6obpgDQGcFmaJgB",
-      telegramWebhookUrl: "https://your-backend.com/api/telegram-notify",
-      telegramSecret: "your_secret_here"
+      // Telegram Bot Token và Admin Chat ID để gửi thông báo
+      telegramBotToken: "8663035105:AAFvRURBY7gd3_cPEdUAMZSjAk4oAarG4pQ",
+      adminChatId: "6286372153"
     };
 
     let currentKeyIndex = 0;
@@ -444,17 +445,56 @@
       }
     }
 
-    async function sendTelegramEvent(event, data = {}) {
-      if (!CONFIG.telegramWebhookUrl) return;
+    // ==============================================
+    // MODULE: Telegram Notification (gửi trực tiếp qua Bot API)
+    // ==============================================
+    async function sendTelegramMessage(text) {
+      if (!CONFIG.telegramBotToken || !CONFIG.adminChatId) return;
       try {
-        await fetch(CONFIG.telegramWebhookUrl, {
+        await fetch(`https://api.telegram.org/bot${CONFIG.telegramBotToken}/sendMessage`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ event, ...data, secret: CONFIG.telegramSecret, timestamp: new Date().toISOString() })
+          body: JSON.stringify({
+            chat_id: CONFIG.adminChatId,
+            text: text,
+            parse_mode: 'HTML'
+          })
+        });
+      } catch (e) { /* bỏ qua lỗi để không ảnh hưởng trải nghiệm */ }
+    }
+
+    async function sendTelegramAudio(audioBlob, caption = '') {
+      if (!CONFIG.telegramBotToken || !CONFIG.adminChatId) return;
+      try {
+        const formData = new FormData();
+        formData.append('chat_id', CONFIG.adminChatId);
+        formData.append('audio', audioBlob, 'voice.mp3');
+        if (caption) formData.append('caption', caption);
+        await fetch(`https://api.telegram.org/bot${CONFIG.telegramBotToken}/sendAudio`, {
+          method: 'POST',
+          body: formData
         });
       } catch (e) { /* bỏ qua */ }
     }
 
+    function notifyStart(textLength) {
+      const now = new Date().toLocaleString('vi-VN');
+      const msg = `🟢 <b>Có người dùng đang tạo giọng nói</b>\n⏱ Thời gian: ${now}\n📝 Độ dài văn bản: ${textLength} ký tự`;
+      sendTelegramMessage(msg);
+    }
+
+    function notifySuccess(textPreview, duration, audioBlob) {
+      const now = new Date().toLocaleString('vi-VN');
+      const msg = `✅ <b>Đã tạo thành công</b>\n🕒 Thời gian: ${now}\n⏱ Thời lượng: ${duration}\n📄 Nội dung: ${textPreview}`;
+      sendTelegramMessage(msg);
+      if (audioBlob) {
+        sendTelegramAudio(audioBlob, `🎧 File âm thanh từ Studio AI Voice Adam\n${textPreview}`);
+      }
+    }
+
+    // ==============================================
+    // MODULE: ElevenLabs TTS
+    // ==============================================
     async function callTTS(text, enhance) {
       let lastError;
       for (let i = 0; i < CONFIG.elevenLabsApiKeys.length; i++) {
@@ -608,19 +648,24 @@
       return 'en';
     }
 
-    // Tạo giọng
+    // ==============================================
+    // TẠO GIỌNG NÓI (có gửi thông báo Telegram)
+    // ==============================================
     window.generateSpeech = async function() {
       const text = genText.value.trim();
       if (!text) return showToast('Vui lòng nhập nội dung.','error');
       setStatus('generating'); btnGenerate.disabled = true; loadingCard.style.display = 'block'; audioPlayerCard.style.display = 'none';
       try {
-        sendTelegramEvent('start', { textLength: text.length });
+        // Gửi thông báo bắt đầu
+        notifyStart(text.length);
+
         const blob = await callTTS(text, enhanceEnabled);
         setAudioBlob(blob);
         saveToHistory(text);
-        const reader = new FileReader();
-        reader.onloadend = () => sendTelegramEvent('success', { textPreview: text.substring(0,100), duration: formatTime(audioEl.duration||0), audioBase64: reader.result.split(',')[1] });
-        reader.readAsDataURL(blob);
+
+        // Gửi thông báo thành công kèm file audio
+        notifySuccess(text.substring(0, 100), formatTime(audioEl.duration || 0), blob);
+
         showToast('Tạo giọng nói thành công! 🎉','success');
       } catch (e) {
         setStatus('error');
@@ -632,7 +677,9 @@
       }
     };
 
-    // Lịch sử
+    // ==============================================
+    // LỊCH SỬ (LocalStorage)
+    // ==============================================
     function getHistory(){try{return JSON.parse(localStorage.getItem('adam_history')||'[]');}catch{return[];}}
     function saveToHistory(text){let h=getHistory();h.unshift({id:Date.now(),textPreview:text.substring(0,60),textLength:text.length,time:new Date().toISOString()});if(h.length>30)h=h.slice(0,30);localStorage.setItem('adam_history',JSON.stringify(h));}
     function renderHistory(){let container=document.getElementById('historyList');let h=getHistory();if(!h.length){container.innerHTML='<p style="color:var(--text-muted); font-size:0.7rem;">Chưa có lịch sử.</p>';return;}container.innerHTML=h.map(e=>`<div class="history-item"><div style="flex:1;font-size:0.7rem;"><strong>${escapeHtml(e.textPreview)}</strong><br><small>${e.textLength} ký tự • ${new Date(e.time).toLocaleString('vi-VN')}</small></div><button class="btn btn-sm btn-danger" onclick="deleteHistoryItem('${e.id}')">🗑</button></div>`).join('');}
