@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
   <title>Studio AI Voice Adam</title>
-  <!-- ==================== TOÀN BỘ CSS (tối giản, ẩn mọi thông tin kỹ thuật) ==================== -->
+  <!-- ==================== TOÀN BỘ CSS ==================== -->
   <style>
     :root {
       --bg-deep: #040b1f;
@@ -47,7 +47,7 @@
     #starfield { position: fixed; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none; }
     #app {
       position: relative; z-index: 1; width: 100%; max-width: 700px;
-      margin: 0 auto; padding: 12px 12px 110px 12px;
+      margin: 0 auto; padding: 12px 12px 130px 12px; /* tăng padding dưới để không bị dock che */
       display: flex; flex-direction: column; gap: 10px;
       min-height: 100vh;
       transform-style: preserve-3d;
@@ -139,37 +139,95 @@
       background: rgba(20,32,65,0.6);
     }
 
-    /* Bottom nav siêu gọn */
+    /* ==============================================
+       THANH ĐIỀU HƯỚNG NỔI (Floating Dock iOS/VisionOS)
+    ============================================== */
     .bottom-nav {
-      position: fixed; bottom: 8px; left: 50%; transform: translateX(-50%); z-index: 100;
-      display: flex; gap: 3px; background: rgba(12,22,50,0.6); backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px); border: 1px solid var(--border-glow);
-      border-radius: 30px; padding: 3px 8px; width: calc(100% - 20px); max-width: 550px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.4), 0 0 0 1px rgba(80,160,255,0.1) inset;
-      transform: translateX(-50%) translateZ(6px);
-    }
-    .nav-item {
-      display: flex; align-items: center; gap: 3px; padding: 6px 12px; border-radius: 20px;
-      cursor: pointer; font-size: 0.65rem; font-weight: 600; color: var(--text-muted);
-      transition: var(--transition-smooth); border: none; background: transparent;
-      white-space: nowrap; position: relative; font-family: var(--font-sans);
-      flex: 1 0 auto; justify-content: center;
-      transform: translateZ(0);
-    }
-    .nav-item.active {
-      color: #fff; background: rgba(40,100,220,0.35);
-      box-shadow: 0 0 12px rgba(60,150,255,0.25), 0 0 0 1px rgba(120,190,255,0.35) inset;
-      animation: nav-glow 2.5s infinite;
-      transform: translateZ(3px);
-    }
-    @keyframes nav-glow { 0%,100%{box-shadow:0 0 12px rgba(60,150,255,0.25),0 0 0 1px rgba(120,190,255,0.35) inset} 50%{box-shadow:0 0 18px rgba(80,180,255,0.4),0 0 0 2px rgba(150,210,255,0.4) inset} }
-    .nav-item:hover:not(.active) { color: #d0e0ff; background: rgba(30,55,100,0.25); transform: translateY(-1px) translateZ(2px); }
-    @media (max-width:550px){
-      .nav-item { padding: 5px 8px; }
-      .nav-item span.nav-label { display: none; }
-      .bottom-nav { gap: 1px; padding: 3px 5px; }
+      position: fixed;
+      bottom: calc(env(safe-area-inset-bottom, 16px) + 16px);
+      left: 50%;
+      transform: translateX(-50%) translateZ(0);
+      z-index: 100;
+      display: flex;
+      gap: 6px;
+      background: rgba(12, 22, 55, 0.65);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      border: 1px solid rgba(100, 200, 255, 0.4);
+      border-radius: 36px;
+      padding: 10px 24px;
+      width: calc(100% - 32px);
+      max-width: 680px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(80, 160, 255, 0.2) inset,
+                  0 0 60px rgba(60, 150, 255, 0.25);
+      transition: box-shadow 0.4s, transform 0.2s ease-out;
+      will-change: transform;
     }
 
+    .nav-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: transparent;
+      border: none;
+      white-space: nowrap;
+      position: relative;
+      font-family: var(--font-sans);
+      flex: 1 0 auto;
+      transition: color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.2s;
+      transform: translateZ(0);
+    }
+
+    .nav-item span:first-child {
+      font-size: 1.3rem;
+      transition: transform 0.2s;
+    }
+
+    .nav-item.active {
+      color: #fff;
+      background: rgba(40, 100, 220, 0.45);
+      box-shadow: 0 0 24px rgba(60, 150, 255, 0.5), 0 0 0 1px rgba(120, 190, 255, 0.5) inset;
+      transform: scale(1.03) translateZ(5px);
+    }
+
+    .nav-item.active span:first-child {
+      transform: scale(1.1);
+    }
+
+    .nav-item:hover:not(.active) {
+      color: #d0e0ff;
+      background: rgba(30, 55, 100, 0.35);
+      transform: translateY(-1px) translateZ(3px);
+    }
+
+    @media (max-width: 550px) {
+      .bottom-nav {
+        gap: 2px;
+        padding: 8px 14px;
+        border-radius: 30px;
+        max-width: 100%;
+      }
+      .nav-item {
+        padding: 8px 12px;
+        font-size: 0.75rem;
+        gap: 4px;
+      }
+      .nav-item span:first-child {
+        font-size: 1.1rem;
+      }
+      .nav-item .nav-label {
+        display: none;
+      }
+    }
+
+    /* Các phần còn lại giữ nguyên */
     .page-section { display: none; flex-direction: column; gap: 10px; animation: fadeSlide 0.3s ease-out; }
     .page-section.active { display: flex; }
     @keyframes fadeSlide { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
@@ -217,7 +275,6 @@
     .skeleton { background:linear-gradient(90deg, rgba(40,70,130,0.2) 0%, rgba(60,110,190,0.35) 40%, rgba(40,70,130,0.2) 70%); background-size:200% 100%; animation:shimmer 1.4s infinite; border-radius:var(--radius-sm); min-height:30px; }
     @keyframes shimmer { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
 
-    /* Footer tối giản */
     .app-footer {
       text-align: center; font-size: 0.6rem; color: var(--text-muted);
       margin-top: 20px; padding: 8px; opacity: 0.7;
@@ -226,7 +283,7 @@
     @media (max-width:480px) {
       .glass-card { padding: 10px; }
       .hero-title { font-size: 1.2rem; }
-      #app { padding: 8px 8px 90px 8px; }
+      #app { padding: 8px 8px 140px 8px; }
     }
   </style>
 </head>
@@ -277,13 +334,11 @@
             </div>
           </div>
 
-          <!-- Cảm xúc -->
           <div class="toggle-container">
             <span class="toggle-label">✨ Cảm xúc</span>
             <div class="toggle-switch" id="enhanceToggle" onclick="toggleEnhance()"></div>
           </div>
 
-          <!-- Dịch tự động -->
           <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
             <label style="display:flex; align-items:center; gap:4px; cursor:pointer; font-size:0.7rem;">
               <input type="checkbox" id="autoTranslateCheck" onchange="toggleTranslateUI()"> Dịch sang Tiếng Việt
@@ -308,7 +363,6 @@
         </div>
       </div>
 
-      <!-- Trình phát -->
       <div class="glass-card" id="audioPlayerCard" style="display:none;">
         <h4 style="margin-bottom:4px; font-size:0.75rem;">🔊 Đang phát</h4>
         <div class="audio-player-card">
@@ -354,13 +408,12 @@
       </div>
     </section>
 
-    <!-- FOOTER -->
     <footer class="app-footer">
       Studio AI Voice Adam · Sản phẩm được xây dựng và phát triển bởi Duy Hoang Network.
     </footer>
   </div>
 
-  <!-- BOTTOM NAV (thu nhỏ) -->
+  <!-- ==================== THANH ĐIỀU HƯỚNG NỔI ==================== -->
   <nav class="bottom-nav" id="bottomNav">
     <button class="nav-item active" data-page="home" onclick="navigateTo('home')"><span>🏠</span><span class="nav-label">Home</span></button>
     <button class="nav-item" data-page="generate" onclick="navigateTo('generate')"><span>🎤</span><span class="nav-label">Tạo</span></button>
@@ -370,7 +423,7 @@
 
   <audio id="audioElement" style="display:none;" preload="auto"></audio>
 
-  <!-- ==================== JAVASCRIPT (toàn bộ xử lý ngầm) ==================== -->
+  <!-- ==================== JAVASCRIPT ==================== -->
   <script>
     // ==============================================
     // CONFIG NỘI BỘ - không hiển thị ra giao diện
@@ -385,7 +438,6 @@
       telegramSecret: "your_secret_here"
     };
 
-    // Luân phiên key
     let currentKeyIndex = 0;
     function getCurrentApiKey() {
       return CONFIG.elevenLabsApiKeys.length ? CONFIG.elevenLabsApiKeys[currentKeyIndex] : null;
@@ -396,7 +448,6 @@
       }
     }
 
-    // Gửi Telegram (webhook)
     async function sendTelegramEvent(event, data = {}) {
       if (!CONFIG.telegramWebhookUrl) return;
       try {
@@ -408,7 +459,6 @@
       } catch (e) { /* bỏ qua */ }
     }
 
-    // Gọi TTS với retry
     async function callTTS(text, enhance) {
       let lastError;
       for (let i = 0; i < CONFIG.elevenLabsApiKeys.length; i++) {
@@ -470,6 +520,7 @@
     const translationBox = document.getElementById('translationBox');
     const translatedText = document.getElementById('translatedText');
     const enhanceToggle = document.getElementById('enhanceToggle');
+    const bottomNav = document.getElementById('bottomNav');
 
     let audioBlob = null, audioBlobUrl = null, isPlaying = false;
     let enhanceEnabled = false;
@@ -494,7 +545,7 @@
     function showToast(msg,type='info'){let t=document.createElement('div');t.className=`toast ${type}`;t.textContent=msg;toastContainer.appendChild(t);setTimeout(()=>t.remove(),2500);}
     function setStatus(s){statusDot.className='status-dot '+s;let m={ready:'Sẵn sàng',generating:'Đang tạo...',playing:'Đang phát',completed:'Hoàn tất',error:'Lỗi'};statusText.textContent=m[s]||s;}
 
-    // Điều hướng
+    // Điều hướng trang
     window.navigateTo=function(page){
       document.querySelectorAll('.page-section').forEach(s=>s.classList.remove('active'));
       document.getElementById('page-'+page).classList.add('active');
@@ -600,10 +651,51 @@
 
     function escapeHtml(s){let d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 
-    // Khởi động
+    // ==============================================
+    // PARALLAX CHO THANH ĐIỀU HƯỚNG NỔI
+    // ==============================================
+    let lastScrollY = window.scrollY;
+    let navOffsetY = 0;
+    let scrollTimeout;
+    const nav = document.getElementById('bottomNav');
+
+    function updateNavParallax() {
+      const currentScrollY = window.scrollY;
+      const delta = currentScrollY - lastScrollY;
+      // Giới hạn dịch chuyển tối đa 12px
+      navOffsetY = Math.min(12, Math.max(-12, navOffsetY + delta * 0.3));
+      // Áp dụng transform, giữ nguyên translateX
+      nav.style.transform = `translateX(-50%) translateY(${navOffsetY}px) translateZ(0)`;
+      lastScrollY = currentScrollY;
+
+      // Khi dừng cuộn 200ms, đưa về vị trí cũ
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        nav.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1)';
+        nav.style.transform = 'translateX(-50%) translateY(0px) translateZ(0)';
+        navOffsetY = 0;
+        // Sau khi transition kết thúc, xóa transition để tránh giật khi cuộn tiếp
+        setTimeout(() => { nav.style.transition = ''; }, 500);
+      }, 200);
+    }
+
+    window.addEventListener('scroll', () => {
+      if (!nav) return;
+      // Xóa transition khi đang cuộn để mượt
+      nav.style.transition = 'none';
+      requestAnimationFrame(updateNavParallax);
+    }, { passive: true });
+
+    // ==============================================
+    // KHỞI ĐỘNG
+    // ==============================================
     (function init(){
       renderHistory();
       setStatus('ready');
+      // Đảm bảo nav ở đúng vị trí ban đầu
+      if (nav) {
+        nav.style.transform = 'translateX(-50%) translateY(0px) translateZ(0)';
+      }
     })();
   </script>
 </body>
