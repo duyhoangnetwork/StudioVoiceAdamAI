@@ -4,13 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
   <title>Studio AI Voice Adam</title>
-  <!-- ==================== TOÀN BỘ CSS (thu gọn, chuyên nghiệp) ==================== -->
+  <!-- ==================== TOÀN BỘ CSS (tối giản, ẩn mọi thông tin kỹ thuật) ==================== -->
   <style>
     :root {
       --bg-deep: #040b1f;
-      --bg-card: rgba(12, 22, 55, 0.5);
-      --border-glow: rgba(64, 180, 255, 0.3);
-      --border-strong: rgba(100, 200, 255, 0.55);
+      --bg-card: rgba(12, 22, 55, 0.45);
+      --border-glow: rgba(64, 180, 255, 0.25);
+      --border-strong: rgba(100, 200, 255, 0.5);
       --cyan: #4cf0ff;
       --blue-galaxy: #3b6eff;
       --text-primary: #eaf2ff;
@@ -20,12 +20,11 @@
       --danger: #ff4d6a;
       --success: #3df0a0;
       --warning: #ffb74d;
-      --radius-lg: 16px;
-      --radius-md: 12px;
-      --radius-sm: 10px;
-      --radius-xs: 6px;
-      --shadow-glow: 0 0 30px rgba(60, 150, 255, 0.2), 0 0 60px rgba(60, 130, 255, 0.08);
-      --shadow-card: 0 6px 24px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(80, 160, 255, 0.15) inset;
+      --radius-lg: 14px;
+      --radius-md: 10px;
+      --radius-sm: 8px;
+      --shadow-glow: 0 0 24px rgba(60, 150, 255, 0.15), 0 0 48px rgba(60, 130, 255, 0.06);
+      --shadow-card: 0 4px 18px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(80, 160, 255, 0.1) inset;
       --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
       --transition-smooth: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       --font-mono: 'SF Mono', 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
@@ -48,42 +47,42 @@
     #starfield { position: fixed; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none; }
     #app {
       position: relative; z-index: 1; width: 100%; max-width: 700px;
-      margin: 0 auto; padding: 12px 12px 100px 12px;
-      display: flex; flex-direction: column; gap: 12px;
+      margin: 0 auto; padding: 12px 12px 110px 12px;
+      display: flex; flex-direction: column; gap: 10px;
       min-height: 100vh;
       transform-style: preserve-3d;
     }
     .header { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding: 2px 0; }
     .header-brand { display: flex; align-items: center; gap: 8px; }
     .header-logo {
-      width: 34px; height: 34px; border-radius: 10px;
+      width: 32px; height: 32px; border-radius: 8px;
       background: linear-gradient(135deg, #3b6eff, #1eb8ff);
       display: flex; align-items: center; justify-content: center;
-      font-size: 1.2rem; box-shadow: 0 0 16px rgba(60,150,255,0.4); flex-shrink: 0;
+      font-size: 1.1rem; box-shadow: 0 0 12px rgba(60,150,255,0.3); flex-shrink: 0;
     }
     .header-title { font-size: 1rem; font-weight: 700; letter-spacing: -0.3px; color: #fff; line-height: 1.2; }
     .header-subtitle { font-size: 0.65rem; color: var(--text-muted); font-weight: 400; }
 
     .status-badge {
       display: inline-flex; align-items: center; gap: 5px;
-      padding: 5px 12px; border-radius: 30px; font-size: 0.65rem; font-weight: 600;
-      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      padding: 5px 10px; border-radius: 20px; font-size: 0.6rem; font-weight: 600;
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
       background: var(--bg-card); border: 1px solid var(--border-glow);
       box-shadow: var(--shadow-card); transition: var(--transition-smooth);
     }
-    .status-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; animation: pulse-dot 2s infinite; }
-    .status-dot.ready { background: var(--success); box-shadow: 0 0 8px var(--success); }
-    .status-dot.generating { background: var(--warning); box-shadow: 0 0 8px var(--warning); animation-duration: 0.7s; }
-    .status-dot.playing { background: var(--cyan); box-shadow: 0 0 10px var(--cyan); animation-duration: 0.5s; }
-    .status-dot.completed { background: var(--success); box-shadow: 0 0 8px var(--success); }
-    .status-dot.error { background: var(--danger); box-shadow: 0 0 10px var(--danger); }
+    .status-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; animation: pulse-dot 2s infinite; }
+    .status-dot.ready { background: var(--success); box-shadow: 0 0 6px var(--success); }
+    .status-dot.generating { background: var(--warning); box-shadow: 0 0 6px var(--warning); animation-duration: 0.7s; }
+    .status-dot.playing { background: var(--cyan); box-shadow: 0 0 8px var(--cyan); animation-duration: 0.5s; }
+    .status-dot.completed { background: var(--success); box-shadow: 0 0 6px var(--success); }
+    .status-dot.error { background: var(--danger); box-shadow: 0 0 8px var(--danger); }
     @keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(1.6)} }
 
-    /* Card thu nhỏ */
+    /* Card siêu gọn */
     .glass-card {
-      background: var(--bg-card); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      background: var(--bg-card); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
       border: 1px solid var(--border-glow); border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-card); padding: 16px;
+      box-shadow: var(--shadow-card); padding: 14px;
       transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s;
       position: relative; overflow: hidden;
       transform: translateZ(0);
@@ -91,141 +90,142 @@
     .glass-card:hover {
       border-color: var(--border-strong);
       box-shadow: var(--shadow-glow), var(--shadow-card);
-      transform: translateY(-2px) translateZ(5px);
+      transform: translateY(-1px) translateZ(3px);
     }
     .glass-card::before {
       content: ''; position: absolute; top:-50%; left:-50%; width:200%; height:200%;
-      background: radial-gradient(circle at 30% 20%, rgba(100,180,255,0.04) 0%, transparent 60%),
-                  radial-gradient(circle at 70% 70%, rgba(60,140,255,0.03) 0%, transparent 60%);
+      background: radial-gradient(circle at 30% 20%, rgba(100,180,255,0.03) 0%, transparent 60%),
+                  radial-gradient(circle at 70% 70%, rgba(60,140,255,0.02) 0%, transparent 60%);
       pointer-events: none; z-index:0;
     }
     .glass-card > * { position: relative; z-index:1; }
 
-    /* Nút nhỏ gọn */
     .btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 5px;
-      padding: 7px 16px; border-radius: 30px; font-size: 0.75rem; font-weight: 600;
+      display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+      padding: 6px 14px; border-radius: 20px; font-size: 0.7rem; font-weight: 600;
       cursor: pointer; border: 1px solid transparent; transition: var(--transition-fast);
       font-family: var(--font-sans); white-space: nowrap; position: relative;
       overflow: hidden; outline: none; color: #fff; background: transparent;
       transform: translateZ(0);
     }
     .btn:active { transform: scale(0.96); }
-    .btn-primary { background: linear-gradient(135deg, #3b6eff, #1e8aff); border-color: rgba(100,180,255,0.5); box-shadow: 0 0 14px rgba(50,130,255,0.3); }
-    .btn-primary:hover { box-shadow: 0 0 20px rgba(60,150,255,0.45); border-color: rgba(150,210,255,0.6); transform: translateY(-1px) translateZ(4px); }
-    .btn-secondary { background: rgba(30,50,90,0.45); border-color: var(--border-glow); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-    .btn-secondary:hover { border-color: var(--border-strong); box-shadow: 0 0 12px rgba(60,140,255,0.15); }
-    .btn-danger { background: rgba(255,60,80,0.18); border-color: rgba(255,80,100,0.4); }
-    .btn-danger:hover { background: rgba(255,60,80,0.3); border-color: rgba(255,100,120,0.6); box-shadow: 0 0 14px rgba(255,60,80,0.25); }
-    .btn-sm { padding: 5px 12px; font-size: 0.7rem; }
-    .btn-icon { width: 36px; height: 36px; padding: 0; border-radius: 50%; font-size: 1rem; }
+    .btn-primary { background: linear-gradient(135deg, #3b6eff, #1e8aff); border-color: rgba(100,180,255,0.5); box-shadow: 0 0 10px rgba(50,130,255,0.25); }
+    .btn-primary:hover { box-shadow: 0 0 16px rgba(60,150,255,0.4); border-color: rgba(150,210,255,0.6); transform: translateY(-1px) translateZ(2px); }
+    .btn-secondary { background: rgba(30,50,90,0.4); border-color: var(--border-glow); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+    .btn-secondary:hover { border-color: var(--border-strong); box-shadow: 0 0 8px rgba(60,140,255,0.1); }
+    .btn-danger { background: rgba(255,60,80,0.15); border-color: rgba(255,80,100,0.3); }
+    .btn-danger:hover { background: rgba(255,60,80,0.25); border-color: rgba(255,100,120,0.5); box-shadow: 0 0 10px rgba(255,60,80,0.2); }
+    .btn-sm { padding: 4px 10px; font-size: 0.65rem; }
+    .btn-icon { width: 32px; height: 32px; padding: 0; border-radius: 50%; font-size: 0.9rem; }
     .btn:disabled { opacity: 0.45; cursor: not-allowed; pointer-events: none; }
 
-    .ripple-effect { position: absolute; border-radius: 50%; background: rgba(255,255,255,0.2); transform: scale(0); animation: ripple-anim 0.5s ease-out forwards; pointer-events: none; }
+    .ripple-effect { position: absolute; border-radius: 50%; background: rgba(255,255,255,0.15); transform: scale(0); animation: ripple-anim 0.5s ease-out forwards; pointer-events: none; }
     @keyframes ripple-anim { to { transform: scale(4); opacity:0; } }
 
-    .input-group { display: flex; flex-direction: column; gap: 4px; }
-    .input-label { font-size: 0.65rem; font-weight: 600; color: var(--text-secondary); letter-spacing: 0.2px; text-transform: uppercase; }
+    .input-group { display: flex; flex-direction: column; gap: 3px; }
+    .input-label { font-size: 0.6rem; font-weight: 600; color: var(--text-secondary); letter-spacing: 0.2px; text-transform: uppercase; }
     .input-field, .textarea-field {
-      width: 100%; padding: 8px 12px; border-radius: var(--radius-sm);
-      background: rgba(15,25,55,0.55); border: 1px solid var(--border-glow);
-      color: #fff; font-size: 0.8rem; font-family: var(--font-sans);
+      width: 100%; padding: 7px 10px; border-radius: var(--radius-sm);
+      background: rgba(15,25,55,0.5); border: 1px solid var(--border-glow);
+      color: #fff; font-size: 0.75rem; font-family: var(--font-sans);
       transition: var(--transition-fast); outline: none;
-      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
       line-height: 1.4;
     }
-    .input-field { height: 38px; }
-    .textarea-field { resize: vertical; min-height: 90px; }
+    .input-field { height: 34px; }
+    .textarea-field { resize: vertical; min-height: 85px; }
     .input-field:focus, .textarea-field:focus {
-      border-color: var(--border-strong); box-shadow: 0 0 12px rgba(60,150,255,0.15);
-      background: rgba(20,32,65,0.65);
+      border-color: var(--border-strong); box-shadow: 0 0 10px rgba(60,150,255,0.1);
+      background: rgba(20,32,65,0.6);
     }
 
-    /* Bottom nav nhỏ gọn */
+    /* Bottom nav siêu gọn */
     .bottom-nav {
-      position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); z-index: 100;
-      display: flex; gap: 4px; background: rgba(12,22,50,0.65); backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px); border: 1px solid var(--border-glow);
-      border-radius: 40px; padding: 4px 10px; width: calc(100% - 24px); max-width: 600px;
-      box-shadow: 0 6px 24px rgba(0,0,0,0.5), 0 0 0 1px rgba(80,160,255,0.12) inset;
-      transform: translateX(-50%) translateZ(8px);
+      position: fixed; bottom: 8px; left: 50%; transform: translateX(-50%); z-index: 100;
+      display: flex; gap: 3px; background: rgba(12,22,50,0.6); backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px); border: 1px solid var(--border-glow);
+      border-radius: 30px; padding: 3px 8px; width: calc(100% - 20px); max-width: 550px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4), 0 0 0 1px rgba(80,160,255,0.1) inset;
+      transform: translateX(-50%) translateZ(6px);
     }
     .nav-item {
-      display: flex; align-items: center; gap: 4px; padding: 7px 14px; border-radius: 30px;
-      cursor: pointer; font-size: 0.7rem; font-weight: 600; color: var(--text-muted);
+      display: flex; align-items: center; gap: 3px; padding: 6px 12px; border-radius: 20px;
+      cursor: pointer; font-size: 0.65rem; font-weight: 600; color: var(--text-muted);
       transition: var(--transition-smooth); border: none; background: transparent;
       white-space: nowrap; position: relative; font-family: var(--font-sans);
       flex: 1 0 auto; justify-content: center;
       transform: translateZ(0);
     }
     .nav-item.active {
-      color: #fff; background: rgba(40,100,220,0.4);
-      box-shadow: 0 0 14px rgba(60,150,255,0.3), 0 0 0 1px rgba(120,190,255,0.4) inset;
+      color: #fff; background: rgba(40,100,220,0.35);
+      box-shadow: 0 0 12px rgba(60,150,255,0.25), 0 0 0 1px rgba(120,190,255,0.35) inset;
       animation: nav-glow 2.5s infinite;
-      transform: translateZ(4px);
+      transform: translateZ(3px);
     }
-    @keyframes nav-glow { 0%,100%{box-shadow:0 0 14px rgba(60,150,255,0.3),0 0 0 1px rgba(120,190,255,0.4) inset} 50%{box-shadow:0 0 22px rgba(80,180,255,0.5),0 0 0 2px rgba(150,210,255,0.5) inset} }
-    .nav-item:hover:not(.active) { color: #d0e0ff; background: rgba(30,55,100,0.3); transform: translateY(-1px) translateZ(2px); }
+    @keyframes nav-glow { 0%,100%{box-shadow:0 0 12px rgba(60,150,255,0.25),0 0 0 1px rgba(120,190,255,0.35) inset} 50%{box-shadow:0 0 18px rgba(80,180,255,0.4),0 0 0 2px rgba(150,210,255,0.4) inset} }
+    .nav-item:hover:not(.active) { color: #d0e0ff; background: rgba(30,55,100,0.25); transform: translateY(-1px) translateZ(2px); }
     @media (max-width:550px){
-      .nav-item { padding: 6px 10px; }
+      .nav-item { padding: 5px 8px; }
       .nav-item span.nav-label { display: none; }
-      .bottom-nav { gap: 2px; padding: 4px 6px; }
+      .bottom-nav { gap: 1px; padding: 3px 5px; }
     }
 
     .page-section { display: none; flex-direction: column; gap: 10px; animation: fadeSlide 0.3s ease-out; }
     .page-section.active { display: flex; }
     @keyframes fadeSlide { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
 
-    .hero-icon { font-size: 3rem; text-align: center; animation: float 3s infinite; }
-    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
-    .hero-title { font-size: 1.6rem; font-weight: 800; text-align: center; letter-spacing: -0.5px; background: linear-gradient(135deg,#fff 0%,#90d0ff 50%,#4cf0ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero-icon { font-size: 2.8rem; text-align: center; animation: float 3s infinite; }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+    .hero-title { font-size: 1.5rem; font-weight: 800; text-align: center; letter-spacing: -0.5px; background: linear-gradient(135deg,#fff 0%,#90d0ff 50%,#4cf0ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
 
-    .audio-player-card { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 10px 14px; border-radius: var(--radius-md); background: rgba(15,28,60,0.55); border:1px solid var(--border-glow); backdrop-filter:blur(10px); }
-    .wave-bars { display:flex; align-items:flex-end; gap:3px; height:32px; flex:1; min-width:60px; }
-    .wave-bar { width:4px; border-radius:2px; background:var(--cyan); transition:height 0.08s; box-shadow:0 0 6px rgba(76,240,255,0.4); }
+    .audio-player-card { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 8px 12px; border-radius: var(--radius-md); background: rgba(15,28,60,0.5); border:1px solid var(--border-glow); backdrop-filter:blur(8px); }
+    .wave-bars { display:flex; align-items:flex-end; gap:2px; height:28px; flex:1; min-width:50px; }
+    .wave-bar { width:4px; border-radius:2px; background:var(--cyan); transition:height 0.08s; box-shadow:0 0 5px rgba(76,240,255,0.35); }
     .wave-bar.playing { animation:wave-dance 0.6s infinite; }
-    @keyframes wave-dance { 0%,100%{height:5px} 50%{height:30px} }
+    @keyframes wave-dance { 0%,100%{height:4px} 50%{height:24px} }
 
-    .toggle-container { display: flex; align-items: center; gap: 8px; margin: 8px 0; }
-    .toggle-label { font-weight: 600; font-size: 0.75rem; }
+    .toggle-container { display: flex; align-items: center; gap: 6px; margin: 6px 0; }
+    .toggle-label { font-weight: 600; font-size: 0.7rem; }
     .toggle-switch {
-      position: relative; width: 44px; height: 24px; background: #e74c3c;
-      border-radius: 24px; cursor: pointer; border: 2px solid transparent;
+      position: relative; width: 38px; height: 20px; background: #e74c3c;
+      border-radius: 20px; cursor: pointer; border: 2px solid transparent;
       transition: background 0.2s, box-shadow 0.2s, border-color 0.2s;
-      box-shadow: 0 1px 6px rgba(0,0,0,0.3);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
     }
     .toggle-switch.active {
       background: #2ecc71;
       border-color: rgba(46,204,113,0.5);
-      box-shadow: 0 0 14px rgba(46,204,113,0.5);
+      box-shadow: 0 0 10px rgba(46,204,113,0.4);
     }
     .toggle-switch::after {
-      content: ''; position: absolute; width: 18px; height: 18px; background: white;
+      content: ''; position: absolute; width: 14px; height: 14px; background: white;
       border-radius: 50%; top: 1px; left: 2px;
       transition: left 0.2s, box-shadow 0.2s;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
     }
-    .toggle-switch.active::after { left: 22px; box-shadow: 0 1px 6px rgba(46,204,113,0.5); }
+    .toggle-switch.active::after { left: 18px; box-shadow: 0 1px 5px rgba(46,204,113,0.5); }
 
-    .history-item { display:flex; align-items:center; gap:8px; flex-wrap:wrap; padding:10px 12px; border-radius:var(--radius-sm); background:rgba(15,28,55,0.4); border:1px solid rgba(60,140,200,0.15); transition:var(--transition-fast); }
-    .history-item:hover { border-color:var(--border-glow); background:rgba(20,35,65,0.5); }
+    .history-item { display:flex; align-items:center; gap:8px; flex-wrap:wrap; padding:8px 10px; border-radius:var(--radius-sm); background:rgba(15,28,55,0.35); border:1px solid rgba(60,140,200,0.12); transition:var(--transition-fast); font-size:0.7rem; }
+    .history-item:hover { border-color:var(--border-glow); background:rgba(20,35,65,0.45); }
 
-    .toast-container { position:fixed; top:12px; right:12px; z-index:9999; display:flex; flex-direction:column; gap:8px; pointer-events:none; }
-    .toast { pointer-events:auto; padding:10px 16px; border-radius:var(--radius-sm); background:rgba(12,22,50,0.75); backdrop-filter:blur(16px); border:1px solid var(--border-glow); box-shadow:var(--shadow-glow); color:#fff; font-weight:500; font-size:0.8rem; animation:toastIn 0.3s, toastOut 0.3s 2s forwards; max-width:300px; }
+    .toast-container { position:fixed; top:10px; right:10px; z-index:9999; display:flex; flex-direction:column; gap:6px; pointer-events:none; }
+    .toast { pointer-events:auto; padding:8px 14px; border-radius:var(--radius-sm); background:rgba(12,22,50,0.7); backdrop-filter:blur(14px); border:1px solid var(--border-glow); box-shadow:var(--shadow-glow); color:#fff; font-weight:500; font-size:0.7rem; animation:toastIn 0.3s, toastOut 0.3s 2s forwards; max-width:260px; }
     .toast.success { border-color:rgba(60,240,150,0.5); } .toast.error { border-color:rgba(255,70,90,0.5); }
     @keyframes toastIn { from{opacity:0;transform:translateX(40px)} to{opacity:1;transform:translateX(0)} }
     @keyframes toastOut { from{opacity:1;transform:translateX(0)} to{opacity:0;transform:translateX(40px)} }
 
-    .skeleton { background:linear-gradient(90deg, rgba(40,70,130,0.25) 0%, rgba(60,110,190,0.4) 40%, rgba(40,70,130,0.25) 70%); background-size:200% 100%; animation:shimmer 1.4s infinite; border-radius:var(--radius-sm); min-height:40px; }
+    .skeleton { background:linear-gradient(90deg, rgba(40,70,130,0.2) 0%, rgba(60,110,190,0.35) 40%, rgba(40,70,130,0.2) 70%); background-size:200% 100%; animation:shimmer 1.4s infinite; border-radius:var(--radius-sm); min-height:30px; }
     @keyframes shimmer { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
 
-    .support-buttons { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 14px; }
-    .support-btn { background: rgba(30,50,90,0.5); border: 1px solid var(--border-glow); padding: 6px 14px; border-radius: 20px; font-weight: 600; font-size:0.7rem; cursor: pointer; transition: var(--transition-fast); display: flex; align-items: center; gap: 4px; color: #fff; }
-    .support-btn:hover { border-color: var(--cyan); background: rgba(40,70,130,0.65); box-shadow: 0 0 10px rgba(60,150,255,0.2); }
+    /* Footer tối giản */
+    .app-footer {
+      text-align: center; font-size: 0.6rem; color: var(--text-muted);
+      margin-top: 20px; padding: 8px; opacity: 0.7;
+    }
 
     @media (max-width:480px) {
-      .glass-card { padding: 12px; }
-      .hero-title { font-size: 1.3rem; }
+      .glass-card { padding: 10px; }
+      .hero-title { font-size: 1.2rem; }
       #app { padding: 8px 8px 90px 8px; }
     }
   </style>
@@ -241,7 +241,7 @@
         <div class="header-logo">🎙️</div>
         <div>
           <div class="header-title">Studio AI Voice Adam</div>
-          <div class="header-subtitle">ElevenLabs V3 · Chuyên nghiệp</div>
+          <div class="header-subtitle">Giọng nói AI tự nhiên</div>
         </div>
       </div>
       <div class="status-badge" id="statusBadge">
@@ -266,11 +266,10 @@
     <!-- TẠO GIỌNG -->
     <section class="page-section" id="page-generate">
       <div class="glass-card">
-        <h3 style="margin-bottom:10px; font-size:0.95rem;">🎤 Chuyển văn bản thành giọng Adam</h3>
-        <div style="display:grid; gap:10px;">
+        <h3 style="margin-bottom:8px; font-size:0.9rem;">🎤 Nhập nội dung cần đọc</h3>
+        <div style="display:grid; gap:8px;">
           <div class="input-group">
-            <label class="input-label">Nội dung</label>
-            <textarea class="textarea-field" id="genText" placeholder="Nhập hoặc dán văn bản cần đọc..."></textarea>
+            <textarea class="textarea-field" id="genText" placeholder="Nhập hoặc dán văn bản..."></textarea>
             <div style="display:flex; justify-content:space-between; font-size:0.6rem; color:var(--text-muted);">
               <span id="charCount">0 ký tự</span>
               <span id="wordCount">0 từ</span>
@@ -278,28 +277,24 @@
             </div>
           </div>
 
-          <!-- Toggle Cảm Xúc -->
+          <!-- Cảm xúc -->
           <div class="toggle-container">
-            <span class="toggle-label">✨ Cảm Xúc</span>
+            <span class="toggle-label">✨ Cảm xúc</span>
             <div class="toggle-switch" id="enhanceToggle" onclick="toggleEnhance()"></div>
-            <span style="font-size:0.65rem; color:var(--text-muted);">Enhance V3</span>
           </div>
 
-          <!-- Tự động dịch -->
-          <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+          <!-- Dịch tự động -->
+          <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
             <label style="display:flex; align-items:center; gap:4px; cursor:pointer; font-size:0.7rem;">
-              <input type="checkbox" id="autoTranslateCheck" onchange="toggleTranslateUI()"> Tự động dịch sang Tiếng Việt
+              <input type="checkbox" id="autoTranslateCheck" onchange="toggleTranslateUI()"> Dịch sang Tiếng Việt
             </label>
             <button class="btn btn-secondary btn-sm" id="btnTranslate" onclick="translateText()" style="display:none;">🌐 Dịch</button>
           </div>
           <div id="translationBox" style="display:none; margin-top:4px;">
-            <div class="input-group">
-              <label class="input-label">Bản dịch</label>
-              <textarea class="textarea-field" id="translatedText" placeholder="Bản dịch..." readonly></textarea>
-              <div style="display:flex; gap:6px; margin-top:4px;">
-                <button class="btn btn-sm btn-secondary" onclick="useOriginalText()">🗣 Gốc</button>
-                <button class="btn btn-sm btn-primary" onclick="useTranslatedText()">📖 Bản dịch</button>
-              </div>
+            <textarea class="textarea-field" id="translatedText" placeholder="Bản dịch..." readonly></textarea>
+            <div style="display:flex; gap:4px; margin-top:4px;">
+              <button class="btn btn-sm btn-secondary" onclick="useOriginalText()">🗣 Gốc</button>
+              <button class="btn btn-sm btn-primary" onclick="useTranslatedText()">📖 Dịch</button>
             </div>
           </div>
 
@@ -313,55 +308,59 @@
         </div>
       </div>
 
-      <!-- Audio Player -->
+      <!-- Trình phát -->
       <div class="glass-card" id="audioPlayerCard" style="display:none;">
-        <h4 style="margin-bottom:6px; font-size:0.8rem;">🔊 Trình phát</h4>
+        <h4 style="margin-bottom:4px; font-size:0.75rem;">🔊 Đang phát</h4>
         <div class="audio-player-card">
           <div class="wave-bars" id="waveBars">
-            <div class="wave-bar" style="height:5px;"></div><div class="wave-bar" style="height:5px;"></div><div class="wave-bar" style="height:5px;"></div><div class="wave-bar" style="height:5px;"></div><div class="wave-bar" style="height:5px;"></div><div class="wave-bar" style="height:5px;"></div><div class="wave-bar" style="height:5px;"></div><div class="wave-bar" style="height:5px;"></div><div class="wave-bar" style="height:5px;"></div><div class="wave-bar" style="height:5px;"></div>
+            <div class="wave-bar" style="height:4px;"></div><div class="wave-bar" style="height:4px;"></div><div class="wave-bar" style="height:4px;"></div><div class="wave-bar" style="height:4px;"></div><div class="wave-bar" style="height:4px;"></div><div class="wave-bar" style="height:4px;"></div><div class="wave-bar" style="height:4px;"></div><div class="wave-bar" style="height:4px;"></div><div class="wave-bar" style="height:4px;"></div><div class="wave-bar" style="height:4px;"></div>
           </div>
-          <div style="font-size:0.65rem;color:var(--text-muted);"><span id="audioDuration">00:00</span> / <span id="audioTotal">00:00</span></div>
+          <div style="font-size:0.6rem;color:var(--text-muted);"><span id="audioDuration">00:00</span> / <span id="audioTotal">00:00</span></div>
         </div>
-        <progress id="audioProgress" value="0" max="100" style="width:100%;height:3px;border-radius:3px;margin-top:6px;accent-color:var(--cyan);"></progress>
+        <progress id="audioProgress" value="0" max="100" style="width:100%;height:2px;border-radius:2px;margin-top:4px;accent-color:var(--cyan);"></progress>
       </div>
       <div class="glass-card" id="loadingCard" style="display:none; text-align:center;">
-        <div style="font-size:1.3rem; animation:float 1.5s infinite;">⏳</div>
-        <p style="font-size:0.75rem;">Đang tạo giọng nói...</p>
-        <div class="skeleton" style="height:6px; max-width:200px; margin:6px auto;"></div>
+        <div style="font-size:1.2rem; animation:float 1.5s infinite;">⏳</div>
+        <p style="font-size:0.7rem;">Đang tạo giọng nói...</p>
+        <div class="skeleton" style="height:4px; max-width:160px; margin:4px auto;"></div>
       </div>
     </section>
 
     <!-- LỊCH SỬ -->
     <section class="page-section" id="page-history">
       <div class="glass-card">
-        <h3 style="font-size:0.9rem;">📜 Lịch sử</h3>
-        <div id="historyList" style="max-height:400px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;"></div>
-        <button class="btn btn-danger btn-sm" style="margin-top:8px;" onclick="clearAllHistory()">🗑 Xóa tất cả</button>
+        <h3 style="font-size:0.85rem;">📜 Lịch sử</h3>
+        <div id="historyList" style="max-height:380px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;"></div>
+        <button class="btn btn-danger btn-sm" style="margin-top:6px;" onclick="clearAllHistory()">🗑 Xóa tất cả</button>
       </div>
     </section>
 
     <!-- BIẾT THÊM -->
     <section class="page-section" id="page-about">
       <div class="glass-card" style="text-align:center;">
-        <div style="font-size:2.5rem;">🌌</div>
-        <h2>Duy Hoang Network</h2>
-        <p style="color:var(--text-secondary); margin-top:8px; font-size:0.75rem;">
-          Đội ngũ phát triển giải pháp AI, tự động hóa và nền tảng web chuyên nghiệp.
+        <div style="font-size:2.2rem;">🌌</div>
+        <h2 style="font-size:1.1rem;">Duy Hoang Network</h2>
+        <p style="color:var(--text-secondary); margin-top:8px; font-size:0.7rem; line-height:1.5;">
+          Studio AI Voice Adam là sản phẩm được xây dựng và phát triển bởi Duy Hoang Network. Chúng tôi là đội ngũ chuyên nghiên cứu, phát triển và vận hành các giải pháp công nghệ hiện đại, tập trung vào trí tuệ nhân tạo (AI), nền tảng web, công cụ tự động hóa và các ứng dụng hỗ trợ sáng tạo nội dung. Mục tiêu của chúng tôi là mang đến những sản phẩm ổn định, thân thiện, tối ưu trải nghiệm người dùng và liên tục được cập nhật để đáp ứng nhu cầu sử dụng thực tế.
         </p>
-        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); gap:6px; margin-top:12px; font-size:0.65rem;">
-          <span>• Phát triển</span><span>• Sản xuất</span><span>• Vận hành</span><span>• Hỗ trợ</span>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(90px,1fr)); gap:4px; margin-top:10px; font-size:0.6rem; color:var(--text-secondary);">
+          <span>• Phát triển</span><span>• Vận hành</span><span>• Hỗ trợ</span><span>• Cập nhật</span><span>• Tối ưu</span>
         </div>
-        <div class="support-buttons">
-          <button class="support-btn" onclick="contactZalo()">💬 Zalo</button>
-          <button class="support-btn" onclick="contactHotline()">📞 Hotline</button>
-          <button class="support-btn" onclick="contactGmail()">✉️ Gmail</button>
+        <div class="support-buttons" style="margin-top:12px;">
+          <button class="btn btn-secondary btn-sm" onclick="contactZalo()">💬 Zalo</button>
+          <button class="btn btn-secondary btn-sm" onclick="contactHotline()">📞 Hotline</button>
+          <button class="btn btn-secondary btn-sm" onclick="contactGmail()">✉️ Gmail</button>
         </div>
-        <p style="font-size:0.6rem; color:var(--text-muted); margin-top:10px;">Studio AI Voice Adam · ElevenLabs V3 · Duy Hoang Network</p>
       </div>
     </section>
+
+    <!-- FOOTER -->
+    <footer class="app-footer">
+      Studio AI Voice Adam · Sản phẩm được xây dựng và phát triển bởi Duy Hoang Network.
+    </footer>
   </div>
 
-  <!-- BOTTOM NAVIGATION (thu nhỏ) -->
+  <!-- BOTTOM NAV (thu nhỏ) -->
   <nav class="bottom-nav" id="bottomNav">
     <button class="nav-item active" data-page="home" onclick="navigateTo('home')"><span>🏠</span><span class="nav-label">Home</span></button>
     <button class="nav-item" data-page="generate" onclick="navigateTo('generate')"><span>🎤</span><span class="nav-label">Tạo</span></button>
@@ -371,32 +370,25 @@
 
   <audio id="audioElement" style="display:none;" preload="auto"></audio>
 
-  <!-- ==================== TOÀN BỘ JAVASCRIPT ==================== -->
+  <!-- ==================== JAVASCRIPT (toàn bộ xử lý ngầm) ==================== -->
   <script>
     // ==============================================
-    // CONFIG - Cấu hình nội bộ, không hiển thị ra UI
+    // CONFIG NỘI BỘ - không hiển thị ra giao diện
     // ==============================================
     const CONFIG = {
-      // Mảng API keys ElevenLabs, sẽ tự động luân phiên nếu gặp lỗi
       elevenLabsApiKeys: [
-        "sk_b454377cb1d262cd490226bf175e55dcc8937aee7d3cf266",
-        "sk_6a278e08e4d9d76846eb904e55b9ea195b2554708044bb25",
-        "sk_283e9386b09c732a8207efe9bfbc193ae0500b903c67a850"
+        "sk_YOUR_ELEVENLABS_API_KEY_1",
+        "sk_YOUR_ELEVENLABS_API_KEY_2"
       ],
-      defaultVoiceId: "pNInz6obpgDQGcFmaJgB", // Giọng Adam
-      // Endpoint trung gian để gửi thông báo Telegram (cần backend xử lý)
+      defaultVoiceId: "pNInz6obpgDQGcFmaJgB",
       telegramWebhookUrl: "https://your-backend.com/api/telegram-notify",
-      // Secret để backend xác thực (nếu cần)
       telegramSecret: "your_secret_here"
     };
 
-    // ==============================================
-    // MODULE: Quản lý API Key luân phiên
-    // ==============================================
-    let currentKeyIndex = 0; // chỉ số key đang dùng
+    // Luân phiên key
+    let currentKeyIndex = 0;
     function getCurrentApiKey() {
-      if (CONFIG.elevenLabsApiKeys.length === 0) return null;
-      return CONFIG.elevenLabsApiKeys[currentKeyIndex];
+      return CONFIG.elevenLabsApiKeys.length ? CONFIG.elevenLabsApiKeys[currentKeyIndex] : null;
     }
     function rotateApiKey() {
       if (CONFIG.elevenLabsApiKeys.length > 1) {
@@ -404,92 +396,54 @@
       }
     }
 
-    // ==============================================
-    // MODULE: Telegram Notification (qua webhook)
-    // ==============================================
-    async function sendTelegramStart(textLength) {
+    // Gửi Telegram (webhook)
+    async function sendTelegramEvent(event, data = {}) {
       if (!CONFIG.telegramWebhookUrl) return;
       try {
         await fetch(CONFIG.telegramWebhookUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            event: 'start',
-            textLength: textLength,
-            timestamp: new Date().toISOString(),
-            secret: CONFIG.telegramSecret
-          })
+          body: JSON.stringify({ event, ...data, secret: CONFIG.telegramSecret, timestamp: new Date().toISOString() })
         });
-      } catch (e) { /* bỏ qua lỗi */ }
+      } catch (e) { /* bỏ qua */ }
     }
 
-    async function sendTelegramSuccess(textPreview, duration, audioBase64) {
-      if (!CONFIG.telegramWebhookUrl) return;
-      try {
-        await fetch(CONFIG.telegramWebhookUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            event: 'success',
-            textPreview: textPreview.substring(0, 200),
-            duration: duration,
-            timestamp: new Date().toISOString(),
-            audioBase64: audioBase64,
-            secret: CONFIG.telegramSecret
-          })
-        });
-      } catch (e) { /* bỏ qua lỗi */ }
-    }
-
-    // ==============================================
-    // MODULE: ElevenLabs TTS với retry key rotation
-    // ==============================================
-    async function callElevenLabsTTS(text, voiceId, enhance) {
-      let attemptKeys = [...CONFIG.elevenLabsApiKeys];
-      let lastError = null;
-      for (let i = 0; i < attemptKeys.length; i++) {
-        const apiKey = attemptKeys[i];
+    // Gọi TTS với retry
+    async function callTTS(text, enhance) {
+      let lastError;
+      for (let i = 0; i < CONFIG.elevenLabsApiKeys.length; i++) {
+        const apiKey = CONFIG.elevenLabsApiKeys[i];
         try {
           const body = {
             text: text,
             model_id: 'eleven_v3',
-            voice_settings: {
-              stability: 0.5,
-              similarity_boost: 0.75,
-              style: enhance ? 0.6 : 0.0,
-              use_speaker_boost: enhance
-            }
+            voice_settings: { stability: 0.5, similarity_boost: 0.75, style: enhance ? 0.6 : 0.0, use_speaker_boost: enhance }
           };
           const lang = detectLanguage(text);
           if (lang && lang !== 'auto') body.language_code = lang;
           if (enhance) body.apply_text_to_speech_enhancement = true;
 
-          const resp = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+          const resp = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${CONFIG.defaultVoiceId}`, {
             method: 'POST',
             headers: { 'xi-api-key': apiKey, 'Content-Type': 'application/json' },
             body: JSON.stringify(body)
           });
           if (!resp.ok) {
             const err = await resp.json().catch(()=>({}));
-            const msg = err.detail?.message || `Lỗi ${resp.status}`;
-            throw new Error(msg);
+            throw new Error(err.detail?.message || `Lỗi ${resp.status}`);
           }
           return await resp.blob();
         } catch (e) {
           lastError = e;
-          // Nếu lỗi quota hoặc auth, thử key tiếp theo
-          if (e.message.includes('quota') || e.message.includes('401') || e.message.includes('403')) {
-            continue;
-          } else {
-            throw e; // lỗi khác không thử lại
-          }
+          if (e.message.includes('quota') || e.message.includes('401') || e.message.includes('403')) continue;
+          else throw e;
         }
       }
-      throw lastError || new Error('Tất cả API key đều thất bại');
+      throw lastError || new Error('Không thể kết nối');
     }
 
     // ==============================================
-    // MODULE: Logic giao diện
+    // DOM & BIẾN GIAO DIỆN
     // ==============================================
     const starCanvas = document.getElementById('starfield');
     const starCtx = starCanvas.getContext('2d');
@@ -521,19 +475,17 @@
     let enhanceEnabled = false;
     let progressInterval = null;
 
-    // Starfield animation
+    // Starfield
     let stars = [], shootingStars = [], nebulaBlobs = [];
     function initStarfield() {
       starCanvas.width = window.innerWidth; starCanvas.height = window.innerHeight;
-      stars = []; for(let i=0;i<150;i++) stars.push({x:Math.random()*starCanvas.width,y:Math.random()*starCanvas.height,r:Math.random()*1.8+0.3,opacity:Math.random(),twinkleSpeed:Math.random()*0.015+0.004,twinklePhase:Math.random()*Math.PI*2,driftX:(Math.random()-0.5)*0.1,driftY:(Math.random()-0.5)*0.06});
-      nebulaBlobs = [{x:starCanvas.width*0.3,y:starCanvas.height*0.3,r:180,color:'rgba(30,80,180,0.03)'}];
+      stars = []; for(let i=0;i<120;i++) stars.push({x:Math.random()*starCanvas.width,y:Math.random()*starCanvas.height,r:Math.random()*1.8+0.3,opacity:Math.random(),twinkleSpeed:Math.random()*0.015+0.004,twinklePhase:Math.random()*Math.PI*2,driftX:(Math.random()-0.5)*0.08,driftY:(Math.random()-0.5)*0.05});
+      nebulaBlobs = [{x:starCanvas.width*0.3,y:starCanvas.height*0.3,r:150,color:'rgba(30,80,180,0.025)'}];
     }
     function drawStarfield(t) {
       starCtx.clearRect(0,0,starCanvas.width,starCanvas.height);
       nebulaBlobs.forEach(b=>{let g=starCtx.createRadialGradient(b.x,b.y,0,b.x,b.y,b.r);g.addColorStop(0,b.color);g.addColorStop(1,'transparent');starCtx.fillStyle=g;starCtx.fillRect(b.x-b.r,b.y-b.r,b.r*2,b.r*2);});
       stars.forEach(s=>{let tw=0.5+0.5*Math.sin(t*s.twinkleSpeed+s.twinklePhase);starCtx.beginPath();starCtx.arc(s.x,s.y,s.r,0,Math.PI*2);starCtx.fillStyle=`rgba(180,220,255,${s.opacity*tw})`;starCtx.fill();s.x+=s.driftX;s.y+=s.driftY;});
-      if(Math.random()<0.002) shootingStars.push({x:Math.random()*starCanvas.width*0.6,y:Math.random()*starCanvas.height*0.3,len:50,speed:6,angle:Math.PI/4,life:1});
-      for(let i=shootingStars.length-1;i>=0;i--){let ss=shootingStars[i];ss.x+=Math.cos(ss.angle)*ss.speed;ss.y+=Math.sin(ss.angle)*ss.speed;ss.life-=0.02;if(ss.life<=0){shootingStars.splice(i,1);continue;}starCtx.beginPath();starCtx.moveTo(ss.x,ss.y);starCtx.lineTo(ss.x-Math.cos(ss.angle)*ss.len,ss.y-Math.sin(ss.angle)*ss.len);starCtx.strokeStyle=`rgba(180,220,255,${ss.life})`;starCtx.stroke();}
       requestAnimationFrame(drawStarfield);
     }
     window.addEventListener('resize',()=>{starCanvas.width=window.innerWidth;starCanvas.height=window.innerHeight;initStarfield();});
@@ -555,15 +507,14 @@
     // Ripple
     document.addEventListener('click',function(e){let btn=e.target.closest('.btn');if(!btn)return;let ripple=document.createElement('span');ripple.className='ripple-effect';let rect=btn.getBoundingClientRect(),size=Math.max(rect.width,rect.height);ripple.style.width=ripple.style.height=size+'px';ripple.style.left=(e.clientX-rect.left-size/2)+'px';ripple.style.top=(e.clientY-rect.top-size/2)+'px';btn.appendChild(ripple);ripple.addEventListener('animationend',()=>ripple.remove());});
 
-    // Đếm ký tự/từ
-    function updateCounters(){let text=genText.value,len=text.length;charCount.textContent=`${len} ký tự`;let words=text.trim()?text.trim().split(/\s+/).length:0;wordCount.textContent=`${words} từ`;let sec=Math.ceil(words/2.5);readTime.textContent=`~${sec}s`;}
+    function updateCounters(){let text=genText.value,len=text.length;charCount.textContent=`${len} ký tự`;let words=text.trim()?text.trim().split(/\s+/).length:0;wordCount.textContent=`${words} từ`;readTime.textContent=`~${Math.ceil(words/2.5)}s`;}
     genText.addEventListener('input',updateCounters);
 
-    // Audio player
+    // Audio
     audioEl.addEventListener('play',()=>{isPlaying=true;updateWaveBars(true);setStatus('playing');btnPlay.textContent='⏸ Tạm dừng';startProgress();});
     audioEl.addEventListener('pause',()=>{isPlaying=false;updateWaveBars(false);setStatus('completed');btnPlay.textContent='▶ Phát';stopProgress();});
     audioEl.addEventListener('ended',()=>{isPlaying=false;updateWaveBars(false);setStatus('completed');btnPlay.textContent='▶ Phát';stopProgress();});
-    function updateWaveBars(playing){let bars=waveBarsContainer.querySelectorAll('.wave-bar');bars.forEach(b=>{if(playing){b.classList.add('playing');b.style.animationDuration=(0.3+Math.random()*0.6)+'s';}else{b.classList.remove('playing');b.style.height=(3+Math.random()*6)+'px';}});}
+    function updateWaveBars(playing){let bars=waveBarsContainer.querySelectorAll('.wave-bar');bars.forEach(b=>{if(playing){b.classList.add('playing');b.style.animationDuration=(0.3+Math.random()*0.6)+'s';}else{b.classList.remove('playing');b.style.height=(3+Math.random()*5)+'px';}});}
     function startProgress(){stopProgress();progressInterval=setInterval(()=>{if(audioEl.duration&&!audioEl.paused){audioProgress.value=audioEl.currentTime;audioDuration.textContent=formatTime(audioEl.currentTime);}},150);}
     function stopProgress(){if(progressInterval)clearInterval(progressInterval);}
     function formatTime(s){if(isNaN(s))return'00:00';let m=Math.floor(s/60),sec=Math.floor(s%60);return String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0');}
@@ -573,14 +524,14 @@
     window.clearGenerate=function(){genText.value='';updateCounters();stopAudio();audioBlob=null;if(audioBlobUrl)URL.revokeObjectURL(audioBlobUrl);audioBlobUrl=null;audioPlayerCard.style.display='none';audioEl.src='';btnPlay.disabled=true;btnStop.disabled=true;btnDownload.disabled=true;setStatus('ready');showToast('Đã làm mới.','info');};
     function setAudioBlob(blob){audioBlob=blob;if(audioBlobUrl)URL.revokeObjectURL(audioBlobUrl);audioBlobUrl=URL.createObjectURL(blob);audioEl.src=audioBlobUrl;audioEl.load();audioPlayerCard.style.display='block';btnPlay.disabled=false;btnStop.disabled=false;btnDownload.disabled=false;updateWaveBars(false);audioProgress.value=0;audioDuration.textContent='00:00';audioTotal.textContent=formatTime(audioEl.duration||0);setStatus('completed');}
 
-    // Enhance toggle
+    // Enhance
     window.toggleEnhance = function() {
       enhanceEnabled = !enhanceEnabled;
-      if (enhanceEnabled) { enhanceToggle.classList.add('active'); showToast('Cảm Xúc đã bật ✨','success'); }
-      else { enhanceToggle.classList.remove('active'); showToast('Cảm Xúc đã tắt','info'); }
+      enhanceToggle.classList.toggle('active', enhanceEnabled);
+      showToast(enhanceEnabled ? 'Cảm xúc đã bật ✨' : 'Cảm xúc đã tắt','info');
     };
 
-    // Dịch tự động
+    // Dịch
     window.toggleTranslateUI = function() {
       btnTranslate.style.display = autoTranslateCheck.checked ? 'inline-flex' : 'none';
       if (!autoTranslateCheck.checked) translationBox.style.display = 'none';
@@ -597,7 +548,7 @@
           translationBox.style.display = 'block';
           showToast('Đã dịch sang Tiếng Việt.','success');
         } else throw new Error('Dịch thất bại');
-      } catch(e) { showToast('Không thể dịch tự động.','error'); }
+      } catch(e) { showToast('Không thể dịch.','error'); }
       finally { btnTranslate.disabled = false; }
     };
     window.useOriginalText = function() { showToast('Sẽ đọc bản gốc.','info'); };
@@ -611,60 +562,45 @@
       return 'en';
     }
 
-    // ==============================================
-    // TẠO GIỌNG NÓI (tích hợp Telegram + luân phiên key)
-    // ==============================================
+    // Tạo giọng
     window.generateSpeech = async function() {
       const text = genText.value.trim();
       if (!text) return showToast('Vui lòng nhập nội dung.','error');
-
       setStatus('generating'); btnGenerate.disabled = true; loadingCard.style.display = 'block'; audioPlayerCard.style.display = 'none';
       try {
-        // Gửi thông báo bắt đầu
-        sendTelegramStart(text.length);
-
-        const blob = await callElevenLabsTTS(text, CONFIG.defaultVoiceId, enhanceEnabled);
+        sendTelegramEvent('start', { textLength: text.length });
+        const blob = await callTTS(text, enhanceEnabled);
         setAudioBlob(blob);
         saveToHistory(text);
-
-        // Gửi thông báo thành công + file (base64)
         const reader = new FileReader();
-        reader.onloadend = () => {
-          const base64 = reader.result.split(',')[1]; // chỉ lấy phần base64
-          sendTelegramSuccess(text, formatTime(audioEl.duration || 0), base64);
-        };
+        reader.onloadend = () => sendTelegramEvent('success', { textPreview: text.substring(0,100), duration: formatTime(audioEl.duration||0), audioBase64: reader.result.split(',')[1] });
         reader.readAsDataURL(blob);
-
         showToast('Tạo giọng nói thành công! 🎉','success');
       } catch (e) {
         setStatus('error');
-        showToast('Lỗi: '+e.message,'error');
-        rotateApiKey(); // thử key khác cho lần sau
+        showToast('Lỗi, vui lòng thử lại.','error');
+        rotateApiKey();
       } finally {
         btnGenerate.disabled = false;
         loadingCard.style.display = 'none';
       }
     };
 
-    // ==============================================
-    // LỊCH SỬ (LocalStorage)
-    // ==============================================
+    // Lịch sử
     function getHistory(){try{return JSON.parse(localStorage.getItem('adam_history')||'[]');}catch{return[];}}
-    function saveToHistory(text){let h=getHistory();h.unshift({id:Date.now(),textPreview:text.substring(0,80),textLength:text.length,time:new Date().toISOString()});if(h.length>30)h=h.slice(0,30);localStorage.setItem('adam_history',JSON.stringify(h));}
+    function saveToHistory(text){let h=getHistory();h.unshift({id:Date.now(),textPreview:text.substring(0,60),textLength:text.length,time:new Date().toISOString()});if(h.length>30)h=h.slice(0,30);localStorage.setItem('adam_history',JSON.stringify(h));}
     function renderHistory(){let container=document.getElementById('historyList');let h=getHistory();if(!h.length){container.innerHTML='<p style="color:var(--text-muted); font-size:0.7rem;">Chưa có lịch sử.</p>';return;}container.innerHTML=h.map(e=>`<div class="history-item"><div style="flex:1;font-size:0.7rem;"><strong>${escapeHtml(e.textPreview)}</strong><br><small>${e.textLength} ký tự • ${new Date(e.time).toLocaleString('vi-VN')}</small></div><button class="btn btn-sm btn-danger" onclick="deleteHistoryItem('${e.id}')">🗑</button></div>`).join('');}
     window.deleteHistoryItem=function(id){let h=getHistory().filter(e=>String(e.id)!==String(id));localStorage.setItem('adam_history',JSON.stringify(h));renderHistory();showToast('Đã xóa.','info');};
     window.clearAllHistory=function(){if(confirm('Xóa toàn bộ lịch sử?')){localStorage.removeItem('adam_history');renderHistory();showToast('Đã xóa tất cả.','info');}};
 
-    // ==============================================
-    // HỖ TRỢ
-    // ==============================================
+    // Hỗ trợ
     window.contactZalo = function() { window.open('https://zalo.me/0385933633', '_blank'); };
     window.contactHotline = function() { window.open('tel:0964493987', '_blank'); };
     window.contactGmail = function() { window.open('mailto:doleduyhoang151@gmail.com', '_blank'); };
 
     function escapeHtml(s){let d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 
-    // Khởi tạo
+    // Khởi động
     (function init(){
       renderHistory();
       setStatus('ready');
