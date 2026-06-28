@@ -425,20 +425,33 @@
     // CONFIG NỘI BỘ - không hiển thị ra giao diện
     // ==============================================
     const CONFIG = {
+      // Mảng API keys ElevenLabs, sẽ tự động luân phiên khi key hết hạn/quota
       elevenLabsApiKeys: [
         "sk_6a278e08e4d9d76846eb904e55b9ea195b2554708044bb25",
-        "sk_b454377cb1d262cd490226bf175e55dcc8937aee7d3cf266"
+        "sk_b454377cb1d262cd490226bf175e55dcc8937aee7d3cf266",
+        "sk_d33bfe9aaab14134a1ddda41f81a264287e3e73e070dfd55",
+        "sk_aff882e8f7a6296fbb4f6675e7d78171d4def03d959743aa",
+        "sk_35346405949a2365f4d24d2f9fd18f453de6b5a70cfc514c"
       ],
-      defaultVoiceId: "pNInz6obpgDQGcFmaJgB",
+      defaultVoiceId: "pNInz6obpgDQGcFmaJgB", // Giọng Adam
       // Telegram Bot Token và Admin Chat ID để gửi thông báo
       telegramBotToken: "8663035105:AAFvRURBY7gd3_cPEdUAMZSjAk4oAarG4pQ",
       adminChatId: "6286372153"
     };
 
+    // Biến lưu index key hiện tại
     let currentKeyIndex = 0;
+
+    /**
+     * Lấy API key hiện tại
+     */
     function getCurrentApiKey() {
       return CONFIG.elevenLabsApiKeys.length ? CONFIG.elevenLabsApiKeys[currentKeyIndex] : null;
     }
+
+    /**
+     * Chuyển sang API key tiếp theo trong mảng
+     */
     function rotateApiKey() {
       if (CONFIG.elevenLabsApiKeys.length > 1) {
         currentKeyIndex = (currentKeyIndex + 1) % CONFIG.elevenLabsApiKeys.length;
@@ -493,17 +506,25 @@
     }
 
     // ==============================================
-    // MODULE: ElevenLabs TTS
+    // MODULE: ElevenLabs TTS với luân phiên API key
     // ==============================================
     async function callTTS(text, enhance) {
       let lastError;
+      // Duyệt qua tất cả các key, bắt đầu từ currentKeyIndex (sẽ được cập nhật khi gọi)
       for (let i = 0; i < CONFIG.elevenLabsApiKeys.length; i++) {
-        const apiKey = CONFIG.elevenLabsApiKeys[i];
+        // Lấy key theo thứ tự ưu tiên: key hiện tại, rồi đến các key tiếp theo
+        const keyIndex = (currentKeyIndex + i) % CONFIG.elevenLabsApiKeys.length;
+        const apiKey = CONFIG.elevenLabsApiKeys[keyIndex];
         try {
           const body = {
             text: text,
             model_id: 'eleven_v3',
-            voice_settings: { stability: 0.5, similarity_boost: 0.75, style: enhance ? 0.6 : 0.0, use_speaker_boost: enhance }
+            voice_settings: { 
+              stability: 0.5, 
+              similarity_boost: 0.75, 
+              style: enhance ? 0.6 : 0.0, 
+              use_speaker_boost: enhance 
+            }
           };
           const lang = detectLanguage(text);
           if (lang && lang !== 'auto') body.language_code = lang;
@@ -514,18 +535,34 @@
             headers: { 'xi-api-key': apiKey, 'Content-Type': 'application/json' },
             body: JSON.stringify(body)
           });
+          
           if (!resp.ok) {
             const err = await resp.json().catch(()=>({}));
-            throw new Error(err.detail?.message || `Lỗi ${resp.status}`);
+            const errorMsg = err.detail?.message || `Lỗi ${resp.status}`;
+            // Nếu lỗi liên quan đến xác thực hoặc quota, thử key tiếp theo
+            if (resp.status === 401 || resp.status === 403 || resp.status === 429 || 
+                errorMsg.includes('quota') || errorMsg.includes('limit')) {
+              lastError = new Error(errorMsg);
+              continue;
+            }
+            throw new Error(errorMsg);
           }
+          
+          // Thành công: cập nhật currentKeyIndex để lần sau dùng key này trước
+          currentKeyIndex = keyIndex;
           return await resp.blob();
         } catch (e) {
           lastError = e;
-          if (e.message.includes('quota') || e.message.includes('401') || e.message.includes('403')) continue;
-          else throw e;
+          // Nếu không phải lỗi quota/auth thì dừng ngay
+          if (!e.message.includes('quota') && !e.message.includes('limit') && 
+              !e.message.includes('401') && !e.message.includes('403') && !e.message.includes('429')) {
+            throw e;
+          }
+          // Ngược lại tiếp tục thử key khác
         }
       }
-      throw lastError || new Error('Không thể kết nối');
+      // Nếu đã thử tất cả các key mà vẫn lỗi
+      throw lastError || new Error('Tất cả API key đều không khả dụng');
     }
 
     // ==============================================
@@ -670,7 +707,7 @@
       } catch (e) {
         setStatus('error');
         showToast('Lỗi, vui lòng thử lại.','error');
-        rotateApiKey();
+        // Không cần rotateApiKey() ở đây vì callTTS đã tự động thử các key
       } finally {
         btnGenerate.disabled = false;
         loadingCard.style.display = 'none';
